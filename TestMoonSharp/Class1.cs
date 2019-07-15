@@ -21,10 +21,12 @@ namespace TestMoonSharp
                     end
                 end
 
-                return fact(mynumber)";
+                --return fact(mynumber)";
             Script script = new Script();
-            script.Globals["mynumber"] = 7;
-            DynValue res = script.DoString(scriptCode);
+            //script.Globals["mynumber"] = 7;
+            //DynValue res = script.DoString(scriptCode);
+            script.DoString(scriptCode);
+            DynValue res = script.Call(script.Globals["fact"], 4);
             Console.WriteLine(res.Number);
             Console.ReadKey();
             return res.Number;
