@@ -1,0 +1,8 @@
+.vs/
+TestMoonSharp/bin/Debug/TestMoonSharp.exe.config
+TestMoonSharp/bin/
+TestMoonSharp/obj/
+packages/MoonSharp.2.0.0.0/.signature.p7s
+packages/
+TestMoonSharp/App.config
+TestMoonSharp.sln.DotSettings.user
