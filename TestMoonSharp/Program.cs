@@ -17,7 +17,8 @@ namespace TestMoonSharp
             //a.CallbackTest();
             //Class1.EnumerableTest();
             //Class1.TableTest1();
-            Class1.TableTest2();
+            //Class1.TableTest2();
+            Class1.TableTestReverse();
         }
     }
 }

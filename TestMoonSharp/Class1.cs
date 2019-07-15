@@ -174,5 +174,19 @@ namespace TestMoonSharp
             Console.ReadKey();
             return res.Number;
         }
+
+        public static double TableTestReverse()
+        {
+            string scriptCode = @"
+                return dosum {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+                ";
+            Script script = new Script();
+            script.Globals["dosum"] = (Func<List<int>, int>)(l => l.Sum());
+            DynValue res = script.DoString(scriptCode);
+
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.Number;
+        }
     }
 }
