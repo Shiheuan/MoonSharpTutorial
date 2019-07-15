@@ -21,8 +21,9 @@ namespace TestMoonSharp
                     end
                 end
 
-                return fact(5)";
+                return fact(mynumber)";
             Script script = new Script();
+            script.Globals["mynumber"] = 7;
             DynValue res = script.DoString(scriptCode);
             Console.WriteLine(res.Number);
             Console.ReadKey();
