@@ -12,7 +12,8 @@ namespace TestMoonSharp
         {
             var a = new Class1();
             //a.MoonSharpFactorial();
-            a.DynValueTest();
+            //a.DynValueTest();
+            a.TupleTest();
         }
     }
 }

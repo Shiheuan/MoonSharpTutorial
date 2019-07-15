@@ -41,5 +41,19 @@ namespace TestMoonSharp
             Console.WriteLine("{0} - {1} - {2}", v1.Number, v2.String, v3.Number);
             Console.ReadKey();
         }
+
+        public void TupleTest()
+        {
+            DynValue ret = Script.RunString("return true, 'ciao', 2*3");
+
+            Console.WriteLine("{0}", ret.Type);
+
+            for (int i = 0; i < ret.Tuple.Length; i++)
+            {
+                Console.WriteLine("{0} = {1}", ret.Tuple[i].Type, ret.Tuple[i]);
+            }
+            Console.ReadKey();
+
+        }
     }
 }
