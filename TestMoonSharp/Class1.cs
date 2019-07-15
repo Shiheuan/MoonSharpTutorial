@@ -23,10 +23,9 @@ namespace TestMoonSharp
 
                 --return fact(mynumber)";
             Script script = new Script();
-            //script.Globals["mynumber"] = 7;
-            //DynValue res = script.DoString(scriptCode);
             script.DoString(scriptCode);
-            DynValue res = script.Call(script.Globals["fact"], 4);
+            DynValue luaFactFunction = script.Globals.Get("fact");
+            DynValue res = script.Call(luaFactFunction, 5);
             Console.WriteLine(res.Number);
             Console.ReadKey();
             return res.Number;
