@@ -55,5 +55,33 @@ namespace TestMoonSharp
             Console.ReadKey();
 
         }
+
+        private static int Mul(int a, int b)
+        {
+            return a * b;
+        }
+
+        public double CallbackTest()
+        {
+            string scriptCode = @"    
+                -- defines a factorial function
+                function fact (n)
+                    if (n == 0) then
+                        return 1
+                    else
+                        return Mul(n, fact(n - 1))
+                    end
+                end";
+
+            Script script = new Script();
+            script.Globals["Mul"] = (Func<int, int, int>) Mul;
+            script.DoString(scriptCode);
+
+            DynValue res = script.Call(script.Globals["fact"], 4);
+
+            Console.WriteLine(res.Number);
+            Console.ReadKey();
+            return res.Number;
+        }
     }
 }
