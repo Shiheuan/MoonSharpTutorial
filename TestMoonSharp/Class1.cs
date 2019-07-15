@@ -30,5 +30,16 @@ namespace TestMoonSharp
             Console.ReadKey();
             return res.Number;
         }
+
+        public void DynValueTest()
+        {
+            DynValue v1 = DynValue.NewNumber(1);
+            DynValue v2 = DynValue.NewString("ciao");
+            DynValue v3 = DynValue.FromObject(new Script(), "hello");
+
+            Console.WriteLine("{0} - {1} - {2}", v1.Type, v2.Type, v3.Type);
+            Console.WriteLine("{0} - {1} - {2}", v1.Number, v2.String, v3.Number);
+            Console.ReadKey();
+        }
     }
 }

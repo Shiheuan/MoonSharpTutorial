@@ -11,7 +11,8 @@ namespace TestMoonSharp
         static void Main(string[] args)
         {
             var a = new Class1();
-            a.MoonSharpFactorial();
+            //a.MoonSharpFactorial();
+            a.DynValueTest();
         }
     }
 }
