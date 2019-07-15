@@ -11,7 +11,7 @@ namespace TestMoonSharp
     {
         public double MoonSharpFactorial()
         {
-            string script = @"
+            string scriptCode = @"
                 -- defines a factorial function
                 function fact (n)
                     if (n == 0) then
@@ -22,7 +22,8 @@ namespace TestMoonSharp
                 end
 
                 return fact(5)";
-            DynValue res = Script.RunString(script);
+            Script script = new Script();
+            DynValue res = script.DoString(scriptCode);
             Console.WriteLine(res.Number);
             Console.ReadKey();
             return res.Number;
