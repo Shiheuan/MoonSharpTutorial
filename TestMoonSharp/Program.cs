@@ -15,7 +15,8 @@ namespace TestMoonSharp
             //a.DynValueTest();
             //a.TupleTest();
             //a.CallbackTest();
-            Class1.EnumerableTest();
+            //Class1.EnumerableTest();
+            Class1.TableTest1();
         }
     }
 }

@@ -111,5 +111,35 @@ namespace TestMoonSharp
             Console.ReadKey();
             return res.Number;
         }
+
+        private static List<int> GetNumberList()
+        {
+            List<int> lst = new List<int>();
+            for (int i = 1; i <= 10; i++)
+            {
+                lst.Add(i);
+            }
+
+            return lst;
+        }
+
+        public static double TableTest1()
+        {
+            string scriptCode = @"
+                total = 0
+                tbl = getNumbers()
+                for _, i in ipairs(tbl) do
+                    total = total + i
+                end
+
+                return total";
+            Script script = new Script();
+            script.Globals["getNumbers"] = (Func<List<int>>)GetNumberList;
+
+            DynValue res = script.DoString(scriptCode);
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.Number;
+        }
     }
 }
