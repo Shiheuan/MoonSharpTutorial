@@ -141,5 +141,38 @@ namespace TestMoonSharp
             Console.ReadKey();
             return res.Number;
         }
+
+        private static Table GetNumberTable(Script script)
+        {
+            Table tbl = new Table(script);
+
+            for (int i = 1; i <= 10; i++)
+            {
+                tbl[i] = i;
+            }
+
+            return tbl;
+        }
+
+        public static double TableTest2()
+        {
+            string scriptCode = @"    
+                total = 0;
+
+                tbl = getNumbers()
+
+                for _, i in ipairs(tbl) do
+                    total = total + i;
+                end
+
+                return total;
+                ";
+            Script script = new Script();
+            script.Globals["getNumbers"] = (Func<Script, Table>) (GetNumberTable);
+            DynValue res = script.DoString(scriptCode);
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.Number;
+        }
     }
 }
