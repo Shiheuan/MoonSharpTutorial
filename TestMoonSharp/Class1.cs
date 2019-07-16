@@ -188,5 +188,28 @@ namespace TestMoonSharp
             Console.ReadKey();
             return res.Number;
         }
+
+        // why return "0"? because the type is wrong, not int but double.
+        public static double TableTestReverseSafer()
+        {
+            string scriptCode = @"
+                doum = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+                print(type(doum))
+                return dosum {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+                ";
+            Script script = new Script();
+            // this "(Func<List<object>, int>)(l=>l.OfType<int>().Sum())" make some mistakes.
+            script.Globals["dosum"] = (Func<List<object>, int>) (l =>
+            {
+                Console.WriteLine(l[0].GetType());
+                return (int)l.OfType<double>().Sum();
+            });
+            //script.Globals["dosum"] = (Func<List<int>, int>)(l => l.Sum());
+            DynValue res = script.DoString(scriptCode);
+
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.Number;
+        }
     }
 }
