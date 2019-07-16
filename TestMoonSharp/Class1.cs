@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using MoonSharp.Interpreter;
@@ -205,6 +206,29 @@ namespace TestMoonSharp
                 return (int)l.OfType<double>().Sum();
             });
             //script.Globals["dosum"] = (Func<List<int>, int>)(l => l.Sum());
+            DynValue res = script.DoString(scriptCode);
+
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.Number;
+        }
+
+        static double Sum(Table t)
+        {
+            // LINQ create a query
+            var nums = from v in t.Values
+                where v.Type == DataType.Number
+                select v.Number;
+            return nums.Sum();
+        }
+
+        public static double TableTestReverseWithTable()
+        {
+            string scriptCode = @"
+                return dosum {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+                ";
+            Script script = new Script();
+            script.Globals["dosum"] = (Func<Table, double>) Sum;
             DynValue res = script.DoString(scriptCode);
 
             Console.WriteLine(res);

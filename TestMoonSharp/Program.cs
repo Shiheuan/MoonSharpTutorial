@@ -19,7 +19,8 @@ namespace TestMoonSharp
             //Class1.TableTest1();
             //Class1.TableTest2();
             //Class1.TableTestReverse();
-            Class1.TableTestReverseSafer();
+            //Class1.TableTestReverseSafer();
+            Class1.TableTestReverseWithTable();
         }
     }
 }
