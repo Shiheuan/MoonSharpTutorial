@@ -20,7 +20,19 @@ namespace TestMoonSharp
             //Class1.TableTest2();
             //Class1.TableTestReverse();
             //Class1.TableTestReverseSafer();
-            Class1.TableTestReverseWithTable();
+            //Class1.TableTestReverseWithTable();
+            //Class1.CallMyClass1();
+            //Class1.CallMyClass2();
+            //Class1.MyClassStaticThroughInstance();
+            //Class1.MyClassStaticThroughPlaceholder();
+            //Class1.MethodWithByRef();
+            //Class1.MethodTestIndexer();
+            //Class1.OperatorsAndMetaMethods_WithAttributes();
+            //Class1.OperatorsAndMetaMethods_WithOperatorsOverloads();
+            //Class1.OperatorsAndMetaMethods_Comparisons();
+            //Class1.OperatorsAndMetaMethods_Length();
+            //Class1.OperatorsAndMetaMethods_ForEach();
+            Class1.Events();
         }
     }
 }
