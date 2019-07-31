@@ -6,6 +6,8 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Loaders;
+using MoonSharp.Interpreter.Platforms;
 
 namespace TestMoonSharp
 {
@@ -656,6 +658,155 @@ namespace TestMoonSharp
             Script script = new Script();
             script.Globals["myobj"] = new MyClass4();
             script.DoString(scriptCode);
+            Console.ReadKey();
+        }
+
+        class MyProxy
+        {
+            private MyClass1 target;
+
+            [MoonSharpHidden]
+            public MyProxy(MyClass1 p)
+            {
+                this.target = p;
+            }
+
+            public double GetValue(double a, double b)
+            {
+                return target.CalcHypotenuse(a, b);
+            }
+        }
+
+        public static double TestProxyObjects()
+        {
+            string scriptCode = @"
+                return mytarget.GetValue(3, 4);
+            ";
+            
+            UserData.RegisterProxyType<MyProxy, MyClass1>(r => new MyProxy(r));
+            Script script = new Script();
+
+            script.Globals["mytarget"] = new MyClass1();
+            DynValue res = script.DoString(scriptCode);
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.Number;
+        }
+        public static void ErrorHandling()
+        {
+            try
+            {
+                string scriptCode = @"    
+					return obj.calcHypotenuse(3, 4);
+				";
+
+                Script script = new Script();
+                DynValue res = script.DoString(scriptCode);
+                Console.WriteLine(res);
+            }
+            catch (ScriptRuntimeException ex)
+            {
+                Console.WriteLine("Doh! An error occured! {0}", ex.DecoratedMessage);
+            }
+            Console.ReadKey();
+        }
+
+        static void DoError()
+        {
+            throw new ScriptRuntimeException("This is an exceptional message, no pun intended.");
+        }
+
+        public static string ErrorGen()
+        {
+            string scriptCode = @"    
+				local _, msg = pcall(DoError);
+				return msg;
+			";
+
+            Script script = new Script();
+            script.Globals["DoError"] = (Action)DoError;
+            DynValue res = script.DoString(scriptCode);
+            Console.WriteLine(res);
+            Console.ReadKey();
+            return res.String;
+        }
+        public static void EmbeddedResourceScriptLoader()
+        {
+            Script script = new Script();
+            script.Options.ScriptLoader = new EmbeddedResourcesScriptLoader();
+            script.DoFile("Scripts/Test.lua");
+            Console.ReadKey();
+        }
+
+        private class MyCustomScriptLoader : ScriptLoaderBase
+        {
+            public override object LoadFile(string file, Table globalContext)
+            {
+                return string.Format("print ([[A request to load '{0}' has been made]])", file);
+            }
+
+            public override bool ScriptFileExists(string name)
+            {
+                return true;
+            }
+        }
+
+        public static void CustomScriptLoader()
+        {
+            Script script = new Script();
+
+            script.Options.ScriptLoader = new MyCustomScriptLoader()
+            {
+                ModulePaths = new string[] { "?_module.lua" }
+            };
+
+            script.DoString(@"
+		        require 'somemodule'
+		        f = loadfile 'someothermodule.lua'
+		        f()
+	        ");
+            Console.ReadKey();
+        }
+
+        public static void ChangePlatform()
+        {
+            // This prints "function"
+            Console.WriteLine(Script.RunString("return type(os.exit);").ToPrintString());
+
+            // Save the old platform
+            var oldplatform = Script.GlobalOptions.Platform;
+
+            // Changing platform after a script has been created is not recommended.. do not do it.
+            // We are doing it for the purpose of the walkthrough..
+
+
+            //Script.GlobalOptions.Platform = new LimitedPlatformAccessor();
+            // => type is function
+            Script.GlobalOptions.Platform = new LimitedPlatformAccessor();
+
+            // This time, this prints "nil"
+            Console.WriteLine(Script.RunString("return type(os.exit);").ToPrintString());
+
+            // Restore the old platform
+            Script.GlobalOptions.Platform = oldplatform;
+            Console.ReadKey();
+        }
+
+        public static void OverriddenPrint()
+        {
+            // redefine print to print in lowercase, for all new scripts
+            Script.DefaultOptions.DebugPrint = s => Console.WriteLine(s.ToLower());
+
+            Script script = new Script();
+
+            DynValue fn = script.LoadString("print 'Hello, World!'");
+
+            fn.Function.Call(); // this prints "hello, world!"
+
+            // redefine print to print in UPPERCASE, for this script only
+            script.Options.DebugPrint = s => Console.WriteLine(s.ToUpper());
+
+            fn.Function.Call(); // this prints "HELLO, WORLD!"
             Console.ReadKey();
         }
     }

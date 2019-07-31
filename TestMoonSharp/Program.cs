@@ -32,7 +32,14 @@ namespace TestMoonSharp
             //Class1.OperatorsAndMetaMethods_Comparisons();
             //Class1.OperatorsAndMetaMethods_Length();
             //Class1.OperatorsAndMetaMethods_ForEach();
-            Class1.Events();
+            //Class1.Events();
+            //Class1.TestProxyObjects();
+            //Class1.ErrorHandling();
+            //Class1.ErrorGen();
+            //Class1.EmbeddedResourceScriptLoader();
+            //Class1.CustomScriptLoader();
+            //Class1.ChangePlatform();
+            Class1.OverriddenPrint();
         }
     }
 }
