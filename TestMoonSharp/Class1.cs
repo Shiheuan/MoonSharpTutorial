@@ -14,6 +14,8 @@ using MoonSharp.Interpreter.Loaders;
 using MoonSharp.Interpreter.Platforms;
 using MoonSharp.VsCodeDebugger;
 using MoonSharp.RemoteDebugger;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace TestMoonSharp
 {
@@ -926,5 +928,110 @@ namespace TestMoonSharp
             Console.ReadKey();
         }
 
+        public static void CoroutinesFromCSharp()
+        {
+            string code = @"
+				return function()
+					local x = 0
+					while true do
+						x = x + 1
+						coroutine.yield(x)
+					end
+				end
+			";
+
+            // Load the code and get the returned function
+            Script script = new Script();
+            DynValue function = script.DoString(code);
+
+            // Create the coroutine in C#
+            DynValue coroutine = script.CreateCoroutine(function);
+
+            // Resume the coroutine forever and ever.. 
+            while (true)
+            {
+                DynValue x = coroutine.Coroutine.Resume();
+                Console.WriteLine("{0}", x);
+            }
+        }
+
+        public static void CoroutinesAsCSharpIterator()
+        {
+            string code = @"
+				return function()
+					local x = 0
+					while true do
+						x = x + 1
+						coroutine.yield(x)
+						if (x > 5) then
+							return 7
+						end
+					end
+				end
+				";
+
+            // Load the code and get the returned function
+            Script script = new Script();
+            DynValue function = script.DoString(code);
+
+            // Create the coroutine in C#
+            DynValue coroutine = script.CreateCoroutine(function);
+
+            // Loop the coroutine 
+            string ret = "";
+
+            foreach (DynValue x in coroutine.Coroutine.AsTypedEnumerable())
+            {
+                ret = ret + x.ToString();
+            }
+            Debug.Assert(ret == "1234567", "HA?");
+            Assert.AreEqual("1234567", ret);
+            Console.WriteLine(ret);
+            Console.ReadKey();
+        }
+
+        public static void PreemptiveCoroutines()
+        {
+            string code = @"
+	            function fib(n)
+		            if (n == 0 or n == 1) then
+			            return 1;
+		            else
+			            return fib(n - 1) + fib(n - 2);
+		            end
+	            end
+	        ";
+
+            // Load the code and get the returned function
+            Script script = new Script(CoreModules.None);
+            script.DoString(code);
+
+            // get the function
+            DynValue function = script.Globals.Get("fib");
+
+            // Create the coroutine in C#
+            DynValue coroutine = script.CreateCoroutine(function);
+
+            // Set the automatic yield counter every 10 instructions. 
+            // 10 is likely too small! Use a much bigger value in your code to avoid interrupting too often!
+            coroutine.Coroutine.AutoYieldCounter = 10;
+
+            int cycles = 0;
+            DynValue result = null;
+
+            // Cycle until we get that the coroutine has returned something useful and not an automatic yield..
+            for (result = coroutine.Coroutine.Resume(8);
+                result.Type == DataType.YieldRequest;
+                result = coroutine.Coroutine.Resume())
+            {
+                cycles += 1;
+            }
+            Console.WriteLine(cycles);
+            Console.WriteLine(result.Number);
+            // Check the values of the operation
+            Assert.AreEqual(DataType.Number, result.Type);
+            Assert.AreEqual(34, result.Number);
+            Console.ReadKey();
+        }
     }
 }

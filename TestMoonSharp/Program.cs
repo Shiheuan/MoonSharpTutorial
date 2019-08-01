@@ -41,7 +41,10 @@ namespace TestMoonSharp
             //Class1.ChangePlatform();
             //Class1.OverriddenPrint();
             //Class1.TestVsDebugger();
-            Class1.DebuggerDemo();
+            //Class1.DebuggerDemo();
+            //Class1.CoroutinesFromCSharp();
+            //Class1.CoroutinesAsCSharpIterator();
+            Class1.PreemptiveCoroutines();
         }
     }
 }
