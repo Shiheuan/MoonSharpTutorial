@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "MoonSharp Attach",
+            "type": "moonsharp-debug",
+            "request": "attach",
+            "debugServer" : 41912,
+            "HELP": "Please set 'debugServer':41912 (or whatever port you ar connecting to) right after the 'version' field in this json."
+        }
+    ]
+}

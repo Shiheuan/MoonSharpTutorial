@@ -39,7 +39,9 @@ namespace TestMoonSharp
             //Class1.EmbeddedResourceScriptLoader();
             //Class1.CustomScriptLoader();
             //Class1.ChangePlatform();
-            Class1.OverriddenPrint();
+            //Class1.OverriddenPrint();
+            //Class1.TestVsDebugger();
+            Class1.DebuggerDemo();
         }
     }
 }

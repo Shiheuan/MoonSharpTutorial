@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
 using MoonSharp.Interpreter.Platforms;
+using MoonSharp.VsCodeDebugger;
+using MoonSharp.RemoteDebugger;
 
 namespace TestMoonSharp
 {
@@ -809,5 +815,116 @@ namespace TestMoonSharp
             fn.Function.Call(); // this prints "HELLO, WORLD!"
             Console.ReadKey();
         }
+
+        public static void TestVsDebugger()
+        {
+            var script = new Script();
+            script.Globals["print"] = new Func<string, int>(text =>
+            {
+                Console.WriteLine(text);
+                return text.Length;
+            });
+            //debug
+            MoonSharpVsCodeDebugServer server = new MoonSharpVsCodeDebugServer();
+            server.Start();
+            server.AttachToScript(script, "DebugScript");
+            /*
+            string scriptCode = @"    
+				function main()
+                    local chars = """"
+                    chars = print(""Hello world"")
+                end
+            ";
+            /**/
+            //Console.WriteLine(scriptCode);
+
+            string scriptCode = File.ReadAllText(@"X:\gitdir\TestMoonSharp\TestMoonSharp\Scripts\debug.lua");
+            //Console.WriteLine(scriptCode);
+
+            script.DoString(scriptCode, null, @"X:\gitdir\TestMoonSharp\TestMoonSharp\Scripts\debug.lua");
+            // wait for debugger to attach
+            bool attached = AwaitDebuggerAttach(server);
+            if (!attached)
+            {
+                Console.WriteLine("VS Code debugger did not attach. Running the script.");
+            }
+
+            
+            script.Call(script.Globals["main"]);
+
+            Console.ReadKey();
+        }
+        private static bool AwaitDebuggerAttach(MoonSharpVsCodeDebugServer server)
+        {
+            // as soon as a client has attached, 'm_Client__' field of 'm_Current' isn't null anymore
+            // 
+            // we wait for ~60 seconds for a client to attach
+
+            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            FieldInfo field = server.GetType().GetField("m_Current", bindFlags);
+            object current = field.GetValue(server);
+
+            FieldInfo property = current.GetType().GetField("m_Client__", bindFlags);
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Console.WriteLine("Waiting for VS Code debugger to attach");
+            while (property.GetValue(current) == null)
+            {
+                Thread.Sleep(500);
+                if (stopwatch.Elapsed.TotalSeconds > 60) return false;
+            }
+            stopwatch.Stop();
+            Console.WriteLine("VS Code debugger attached");
+            return true;
+        }
+
+        static RemoteDebuggerService remoteDebugger;
+
+        static void ActivateRemoteDebugger(Script script)
+        {
+            if (remoteDebugger == null)
+            {
+                remoteDebugger = new RemoteDebuggerService();
+
+                // the last boolean is to specify if the script is free to run 
+                // after attachment, defaults to false
+                remoteDebugger.Attach(script, "Description of the script", false);
+            }
+
+            // start the web-browser at the correct url. Replace this or just
+            // pass the url to the user in some way.
+            Process.Start(remoteDebugger.HttpUrlStringLocalHost);
+        }
+
+        public static void DebuggerDemo()
+        {
+            Script script = new Script();
+
+            ActivateRemoteDebugger(script);
+
+            script.DoString(@"
+
+				function accum(n, f)
+					if (n == 0) then
+						return 1;
+					else
+						return n * f(n);
+					end
+				end
+
+
+				local sum = 0;
+
+				for i = 1, 5 do
+					-- let's use a lambda to spice things up
+					sum = sum + accum(i, | x | x * 2);
+				end
+				");
+
+            Console.WriteLine("The script has ended..");
+            Console.ReadKey();
+        }
+
     }
 }
