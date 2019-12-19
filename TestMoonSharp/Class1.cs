@@ -77,6 +77,7 @@ namespace TestMoonSharp
         {
             string scriptCode = @"    
                 -- defines a factorial function
+                print(Mul) -- function: 00000097
                 function fact (n)
                     if (n == 0) then
                         return 1
@@ -87,8 +88,17 @@ namespace TestMoonSharp
 
             Script script = new Script();
             script.Globals["Mul"] = (Func<int, int, int>) Mul;
+            
             script.DoString(scriptCode);
+            Console.WriteLine(script.Globals["Mul"]);
+            Console.WriteLine(script.Globals.Get("Mul"));
+            Console.WriteLine(script.Globals["fact"]);
+            Console.WriteLine(script.Globals.Get("fact"));
 
+            // -> MoonSharp.Interpreter.CallbackFunction
+            // -> (Function CLR)
+            // -> MoonSharp.Interpreter.Closure
+            // -> (Function 00000067)
             DynValue res = script.Call(script.Globals["fact"], 4);
 
             Console.WriteLine(res.Number);
@@ -172,7 +182,7 @@ namespace TestMoonSharp
                 total = 0;
 
                 tbl = getNumbers()
-
+                print(tbl) --
                 for _, i in ipairs(tbl) do
                     total = total + i;
                 end
@@ -185,6 +195,31 @@ namespace TestMoonSharp
             Console.WriteLine(res);
             Console.ReadKey();
             return res.Number;
+        }
+
+        public static void TableTest3()
+        {
+
+            Script script = new Script();
+            Table tbl = new Table(script);
+
+            for (int i = 1; i <= 10; i++)
+            {
+                tbl[i] = i;
+            }
+
+            tbl["name"] = "a table you know.";
+
+            script.Globals["t"] = tbl;
+            var scriptCode = @"
+                print(t)
+                print(t.name)
+                for k, v in ipairs(t) do
+                    print(k, v)
+                end
+            ";
+            script.DoString(scriptCode);
+            Console.ReadKey();
         }
 
         public static double TableTestReverse()

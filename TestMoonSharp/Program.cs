@@ -18,6 +18,7 @@ namespace TestMoonSharp
             //Class1.EnumerableTest();
             //Class1.TableTest1();
             //Class1.TableTest2();
+            Class1.TableTest3();
             //Class1.TableTestReverse();
             //Class1.TableTestReverseSafer();
             //Class1.TableTestReverseWithTable();
@@ -44,7 +45,7 @@ namespace TestMoonSharp
             //Class1.DebuggerDemo();
             //Class1.CoroutinesFromCSharp();
             //Class1.CoroutinesAsCSharpIterator();
-            Class1.PreemptiveCoroutines();
+            //Class1.PreemptiveCoroutines();
         }
     }
 }
