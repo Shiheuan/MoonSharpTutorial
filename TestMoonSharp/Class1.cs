@@ -1128,5 +1128,32 @@ namespace TestMoonSharp
 
             Console.ReadKey();
         }
+
+        public void testCoroutine()
+        {
+            const string test = @"
+                co = function()
+                    local count = 0
+                    while count < 4 do
+                        count = count + 1
+                        coroutine.yield()
+                    end
+                end
+            ";
+
+            Script script = new Script();
+            script.DoString(test);
+            var c = script.CreateCoroutine(script.Globals.Get("co"));
+
+            for (int i = 0; i < 6; i++)
+            {
+                Console.WriteLine(c.Coroutine.State);
+                if (c.Coroutine.State != CoroutineState.Dead)
+                    c.Coroutine.Resume();
+            }
+
+            Console.ReadKey();
+        }
+
     }
 }
