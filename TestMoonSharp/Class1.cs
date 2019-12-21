@@ -1110,5 +1110,23 @@ namespace TestMoonSharp
         {
             Console.WriteLine($"In function 'testCast', say {name} !");
         }
+
+        public void testLoopWait()
+        {
+            const string test = @"
+        do
+            print('can I?')
+            local timer = 0
+            while timer< 10000000 do
+                timer = timer + 10
+            end
+            print('You can.')
+        end";
+
+            Script script = new Script();
+            script.DoString(test);
+
+            Console.ReadKey();
+        }
     }
 }

@@ -48,7 +48,9 @@ namespace TestMoonSharp
             //Class1.PreemptiveCoroutines();
 
             //Class1.testDelegate(a);
-            a.testDelegate2();
+            //a.testDelegate2();
+
+            a.testLoopWait();   
         }
     }
 }
