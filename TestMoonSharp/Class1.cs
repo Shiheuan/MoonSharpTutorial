@@ -1068,5 +1068,47 @@ namespace TestMoonSharp
             Assert.AreEqual(34, result.Number);
             Console.ReadKey();
         }
+
+        private delegate void CastDelegate(string str);
+
+        private Delegate Dely;
+
+        public static void testDelegate(Class1 ins)
+        {
+            CastDelegate cast;
+            cast = testCastStatic;
+            cast("type1");
+            cast = new CastDelegate(ins.testCast);
+            cast = ins.testCast;
+            cast("tooStupid");
+            ins.Dely = (CastDelegate)testCastStatic;
+            ((CastDelegate)ins.Dely)("Whaaaaat");
+
+            Console.ReadKey();
+        }
+
+        public void testDelegate2()
+        {
+            CastDelegate cast2;
+            cast2 = testCastStatic;
+            cast2("type1");
+            cast2 = new CastDelegate(testCast);
+            cast2 = testCast;
+            cast2("tooStupid");
+            Dely = (CastDelegate)testCastStatic;
+            ((CastDelegate)Dely)("Whaaaaat");
+
+            Console.ReadKey();
+        }
+
+        private static void testCastStatic(string name)
+        {
+            Console.WriteLine($"In function 'testCastStatic', say {name} !");
+        }
+
+        private void testCast(string name)
+        {
+            Console.WriteLine($"In function 'testCast', say {name} !");
+        }
     }
 }
