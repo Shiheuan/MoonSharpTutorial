@@ -51,7 +51,8 @@ namespace TestMoonSharp
             //a.testDelegate2();
 
             //a.testLoopWait();   
-            a.testCoroutine();
+            //a.testCoroutine();
+            a.testTail();
         }
     }
 }

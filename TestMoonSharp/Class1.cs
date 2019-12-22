@@ -1154,6 +1154,38 @@ namespace TestMoonSharp
 
             Console.ReadKey();
         }
+         
+        private Script script = new Script();
+        public void testTail()
+        {
+            var lua = @"    
+                print(tail)
+                tail(100)
+            ";
+            //var script = new Script();
+            script.Globals["tail"] = DynValue.NewCallback(CallbackFunction.FromDelegate(script, (Func<int, DynValue>) newTail));
+            script.DoString(lua);
+           
+            Console.ReadKey();
+        }
 
+        private DynValue newTail(int waitTime)
+        {
+            var lua = @"
+                return function(waitTime)
+                    local timer = 0
+                    while timer < waitTime do
+                        print(timer)
+                        timer = timer + 10
+                        --coroutine.yield(timer)
+                    end
+                end
+            ";
+            //var script = new Script();
+            var func = script.DoString(lua);
+            //return func; // return this can not call in Lua script.
+            return DynValue.NewTailCallReq(func, DynValue.NewNumber(waitTime)); // return this make sure they can call it.
+
+        }
     }
 }
