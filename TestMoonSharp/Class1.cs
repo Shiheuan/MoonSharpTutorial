@@ -1114,6 +1114,7 @@ namespace TestMoonSharp
         public void testLoopWait()
         {
             const string test = @"
+        function test()
         do
             print('can I?')
             local timer = 0
@@ -1121,10 +1122,13 @@ namespace TestMoonSharp
                 timer = timer + 10
             end
             print('You can.')
+        end
         end";
 
             Script script = new Script();
             script.DoString(test);
+            Console.WriteLine("is this go first?");
+            script.Call(script.Globals.Get("test"));
 
             Console.ReadKey();
         }
